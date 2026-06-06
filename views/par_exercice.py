@@ -18,7 +18,7 @@ def render(df: pd.DataFrame) -> None:
     filtre = df[df["exercice_id"] == ex_id].copy()
 
     st.divider()
-    _render_records(filtre, ex_id, choix)
+    _render_records(filtre, choix)
     st.divider()
 
     col1, col2 = st.columns(2)
@@ -31,9 +31,9 @@ def render(df: pd.DataFrame) -> None:
     _render_progression(filtre)
 
 
-def _render_records(filtre: pd.DataFrame, exercice_id: int, nom: str) -> None:
-    pr = records_personnels(filtre, exercice_id)
-    prog = progression_exercice(filtre, exercice_id)
+def _render_records(filtre: pd.DataFrame, nom: str) -> None:
+    pr = records_personnels(filtre)
+    prog = progression_exercice(filtre)
 
     st.subheader(f"Records — {nom}")
     c1, c2, c3 = st.columns(3)

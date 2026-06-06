@@ -35,42 +35,48 @@ def kpi_global(df: pd.DataFrame) -> dict:
 
 # ── Métriques par exercice ────────────────────────────────────────────────────
 
-def progression_exercice(df: pd.DataFrame, exercice_id: int) -> float:
+def progression_exercice(df: pd.DataFrame) -> float:
     """
     Taux de progression (%) entre le premier et le dernier mois
     pour un exercice donné — basé sur la charge maximale mensuelle.
     """
-    filtre = df[df["exercice_id"] == exercice_id].copy()
-    if filtre.empty:
+    if df.empty:
         return 0.0
 
-    filtre["periode"] = filtre["date"].dt.to_period("M")
-    charge_par_mois = filtre.groupby("periode")["charge_kg"].max().sort_index()
+    df = df.copy()
+    df["periode"] = df["date"].dt.to_period("M")
+    charge_par_mois = df.groupby("periode")["charge_kg"].max().sort_index()
 
     if len(charge_par_mois) < 2:
         return 0.0
 
-    n = min(2, len(charge_par_mois) // 2)
-    debut = charge_par_mois.iloc[:n].mean()
-    fin = charge_par_mois.iloc[-n:].mean()
+    # Dataset fixé à 6 mois : on compare les 3 premiers vs les 3 derniers
+    debut = charge_par_mois.iloc[:3].mean()
+    fin = charge_par_mois.iloc[-3:].mean()
     return taux_progression(debut, fin)
 
 
-def records_personnels(df: pd.DataFrame, exercice_id: int) -> dict:
+def records_personnels(df: pd.DataFrame) -> dict:
     """Charge max et volume max sur une séance pour un exercice."""
-    filtre = df[df["exercice_id"] == exercice_id]
-    if filtre.empty:
+    if df.empty:
         return {"charge_max": 0.0, "volume_max_seance": 0.0}
 
-    charge_max = filtre["charge_kg"].max()
+    charge_max = df["charge_kg"].max()
 
-    volume_par_seance = filtre.groupby("date")["volume"].sum()
+    volume_par_seance = df.groupby("date")["volume"].sum()
     volume_max = volume_par_seance.max()
 
     return {
         "charge_max": round(charge_max, 1),
         "volume_max_seance": round(volume_max, 1),
     }
+
+
+# ── Répartition par groupe musculaire ────────────────────────────────────────
+
+def repartition_groupes(df: pd.DataFrame) -> pd.DataFrame:
+    """Volume total par groupe musculaire, trié décroissant."""
+    return df.groupby("groupe_musculaire", as_index=False)["volume"].sum().sort_values("volume", ascending=False)
 
 
 # ── Fréquence d'entraînement (heatmap) ───────────────────────────────────────

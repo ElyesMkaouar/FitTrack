@@ -74,7 +74,7 @@ def _render_tableau(filtre: pd.DataFrame) -> None:
     affichage["Charge (kg)"] = affichage["Charge (kg)"].round(1)
     affichage["Volume (kg)"] = affichage["Volume (kg)"].round(1)
     affichage["1RM estimé"] = affichage["1RM estimé"].round(1)
-    affichage["Notes"] = affichage["Notes"].fillna("").astype(str).replace("nan", "")
+    affichage["Notes"] = affichage["Notes"].fillna("")
     affichage["Date"] = affichage["Date"].dt.strftime("%Y-%m-%d")
 
     st.dataframe(affichage, use_container_width=True, hide_index=True, height=400)

@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from utils.metrics import kpi_global
+from utils.metrics import kpi_global, repartition_groupes
 from pipeline.transform import volume_par_semaine
 
 
@@ -59,7 +59,7 @@ def _render_volume_hebdo(df: pd.DataFrame) -> None:
 def _render_repartition_groupes(df: pd.DataFrame) -> None:
     st.subheader("Groupes musculaires")
 
-    repartition = df.groupby("groupe_musculaire", as_index=False)["volume"].sum().sort_values("volume", ascending=False)
+    repartition = repartition_groupes(df)
 
     fig = px.pie(
         repartition,

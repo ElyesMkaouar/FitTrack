@@ -41,14 +41,14 @@ def _df_progression():
     ])
 
 def test_progression_exercice_croissante():
-    assert progression_exercice(_df_progression(), 1) > 0
+    assert progression_exercice(_df_progression()) > 0
 
 def test_progression_exercice_exercice_inconnu():
-    assert progression_exercice(_df_progression(), 99) == 0.0
+    assert progression_exercice(pd.DataFrame(columns=["exercice_id", "date", "charge_kg"])) == 0.0
 
 def test_progression_exercice_un_seul_mois():
     df = pd.DataFrame([{"exercice_id": 1, "date": pd.Timestamp("2025-01-15"), "charge_kg": 100}])
-    assert progression_exercice(df, 1) == 0.0
+    assert progression_exercice(df) == 0.0
 
 
 # ── records_personnels ────────────────────────────────────────────────────────
@@ -59,12 +59,12 @@ def test_records_personnels():
         {"exercice_id": 1, "date": pd.Timestamp("2025-01-01"), "charge_kg": 105.0, "volume": 630.0},
         {"exercice_id": 1, "date": pd.Timestamp("2025-01-08"), "charge_kg": 102.0, "volume": 612.0},
     ])
-    r = records_personnels(df, 1)
+    r = records_personnels(df)
     assert r["charge_max"] == pytest.approx(105.0)
     assert r["volume_max_seance"] == pytest.approx(1230.0)
 
 def test_records_personnels_vide():
     df = pd.DataFrame(columns=["exercice_id", "charge_kg", "volume", "date"])
-    r = records_personnels(df, 1)
+    r = records_personnels(df)
     assert r["charge_max"] == 0.0
     assert r["volume_max_seance"] == 0.0
