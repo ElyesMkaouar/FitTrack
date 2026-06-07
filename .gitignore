@@ -23,3 +23,7 @@ env/
 
 # Claude
 .claude/
+
+# Slides
+generate_slides.py
+*.pptx

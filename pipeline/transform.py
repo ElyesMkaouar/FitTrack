@@ -78,10 +78,13 @@ def build_dataset(path: Path = DATA_PATH) -> pd.DataFrame:
 # ── Agrégations temporelles ───────────────────────────────────────────────────
 
 def volume_par_semaine(df: pd.DataFrame) -> pd.DataFrame:
-    """Volume total par semaine ISO (année + numéro de semaine)."""
-    tmp = df.copy()
-    tmp["annee_iso"] = tmp["date"].dt.isocalendar().year.astype(int)
-    return tmp.groupby(["annee_iso", "semaine"], as_index=False)["volume"].sum().assign(label=lambda x: x["annee_iso"].astype(str) + "-S" + x["semaine"].astype(str).str.zfill(2)).sort_values(["annee_iso", "semaine"])
+    """Volume total par semaine de programme (cycles de 7 jours depuis le début, alignés sur le rythme d'entraînement et le deload)."""
+    return (
+        df.groupby("semaine_programme", as_index=False)["volume"]
+        .sum()
+        .assign(label=lambda x: "S" + x["semaine_programme"].astype(str).str.zfill(2))
+        .sort_values("semaine_programme")
+    )
 
 
 def volume_par_mois(df: pd.DataFrame) -> pd.DataFrame:

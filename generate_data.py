@@ -48,11 +48,9 @@ def main() -> None:
 
     df_calendrier = pd.DataFrame({
         "date": jours,
-        "semaine": jours.isocalendar().week.astype(int),
         "semaine_programme": ((jours - jours[0]).days // 7) + 1,
         "mois": jours.month,
         "annee": jours.year,
-        "jour_semaine": jours.day_name(),
     })
 
     print(f"Calendrier : {len(df_calendrier)} jours ({date_debut} → {date_fin})")
@@ -91,7 +89,7 @@ def main() -> None:
     #
     # VARIATION DES REPS :
     #   Semaines 1-3 : reps_base (charge standard)
-    #   Semaine 4    : deload → reps_base + 2, charge -10% (récupération)
+    #   Semaine 4    : deload → reps_base, charge -10% (récupération)
     #
 
     lignes = []
@@ -124,7 +122,7 @@ def main() -> None:
 
             # Répétitions
             bruit_reps = int(np.random.choice([-2, -1, 0, 1, 2], p=[0.1, 0.2, 0.4, 0.2, 0.1]))
-            reps = max(1, ex["reps_base"] + (2 if is_deload else 0) + bruit_reps)
+            reps = max(1, ex["reps_base"] + bruit_reps)
 
             # Nombre de séries pour cette séance
             nb_series = int(ex["series_default"])
@@ -177,7 +175,7 @@ def main() -> None:
     ]]
 
     df_calendrier_export = df_calendrier[[
-        "date", "semaine", "semaine_programme", "mois", "annee", "jour_semaine"
+        "date", "semaine_programme", "mois", "annee"
     ]]
 
     # ══════════════════════════════════════════════════════════════════════════

@@ -85,19 +85,17 @@ def _render_heatmap(df: pd.DataFrame) -> None:
 
     freq = frequence_par_jour(df)
 
-    semaines = sorted(freq[["annee_iso", "semaine_iso"]].drop_duplicates().apply(
-        lambda r: (r["annee_iso"], r["semaine_iso"]), axis=1
-    ).tolist())
+    semaines = sorted(freq["semaine_programme"].unique().tolist())
     semaine_idx = {s: i for i, s in enumerate(semaines)}
 
     z = np.zeros((7, len(semaines)))
     for _, row in freq.iterrows():
-        col = semaine_idx.get((row["annee_iso"], row["semaine_iso"]))
+        col = semaine_idx.get(row["semaine_programme"])
         if col is not None:
             z[int(row["jour_num"]), col] = row["nb_exercices"]
 
     jours_labels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
-    x_labels = [f"{a}-S{str(s).zfill(2)}" for a, s in semaines]
+    x_labels = [f"S{str(s).zfill(2)}" for s in semaines]
 
     fig = go.Figure(go.Heatmap(
         z=z,

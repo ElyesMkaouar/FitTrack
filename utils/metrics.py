@@ -86,8 +86,6 @@ def frequence_par_jour(df: pd.DataFrame) -> pd.DataFrame:
     Retourne un DataFrame pivot (semaines * jours) du nombre
     d'exercices distincts pratiqués chaque jour — pour la heatmap.
     """
-    freq = df.groupby("date", as_index=False)["exercice_id"].nunique().rename(columns={"exercice_id": "nb_exercices"})
-    freq["semaine_iso"] = freq["date"].dt.isocalendar().week.astype(int)
-    freq["annee_iso"] = freq["date"].dt.isocalendar().year.astype(int)
+    freq = df.groupby(["date", "semaine_programme"], as_index=False)["exercice_id"].nunique().rename(columns={"exercice_id": "nb_exercices"})
     freq["jour_num"] = freq["date"].dt.dayofweek
     return freq
